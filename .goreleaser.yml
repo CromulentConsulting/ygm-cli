@@ -1,0 +1,62 @@
+# GoReleaser configuration for ygm CLI
+# https://goreleaser.com
+
+version: 2
+
+project_name: ygm
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: ygm
+    main: ./cmd/ygm
+    binary: ygm
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/CromulentConsulting/ygm-cli/internal/cmd.Version={{.Version}}
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE*
+
+# Also create raw binaries for curl-based installs
+  - id: binaries
+    format: binary
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+release:
+  github:
+    owner: CromulentConsulting
+    name: ygm-cli
+  draft: false
+  prerelease: auto
+  name_template: "v{{.Version}}"
