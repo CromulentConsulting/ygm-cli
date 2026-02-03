@@ -1,0 +1,92 @@
+# ygm - You've Got Marketing CLI
+
+Command-line interface for [You've Got Marketing](https://ygm.app).
+
+## Installation
+
+### From Source
+
+```bash
+go install github.com/CromulentConsulting/ygm-cli/cmd/ygm@latest
+```
+
+### From Releases
+
+Download the latest binary from [Releases](https://github.com/CromulentConsulting/ygm-cli/releases).
+
+## Usage
+
+### Authentication
+
+```bash
+ygm login
+```
+
+This opens your browser for authentication. Enter the code shown in your terminal.
+
+### View Brand DNA
+
+```bash
+ygm brand          # Human-readable output
+ygm brand --json   # JSON output for scripts
+```
+
+### List Tasks
+
+```bash
+ygm tasks                      # All tasks
+ygm tasks --status=pending     # Filter by status
+ygm tasks --platform=instagram # Filter by platform
+ygm tasks --json               # JSON output
+```
+
+### Get Context for AI Prompts
+
+```bash
+ygm context
+```
+
+Returns a JSON dump of your brand DNA, marketing plan, and pending tasks - perfect for including in AI prompts.
+
+### Multi-Organization Support
+
+```bash
+ygm --org=other-org brand   # Use a specific organization
+```
+
+## Configuration
+
+Config is stored in `~/.config/ygm/config.yml`:
+
+```yaml
+version: 1
+default_org: acme-corp
+api_url: https://ygm.app
+
+accounts:
+  acme-corp:
+    token: ygm_abc123...
+    user_email: user@example.com
+    org_id: 1
+    org_name: Acme Corp
+```
+
+## Development
+
+```bash
+# Build
+make build
+
+# Install locally
+make install
+
+# Run tests
+make test
+
+# Cross-compile for all platforms
+make build-all
+```
+
+## License
+
+MIT
