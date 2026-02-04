@@ -118,12 +118,41 @@ func runLogin(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to save config: %w", err)
 		}
 
+		// Auto-link current directory to this org
+		localCfg := &config.LocalConfig{
+			Org: token.Organization.Slug,
+		}
+		linkedDir := ""
+		if err := localCfg.Save(); err == nil {
+			if cwd, err := os.Getwd(); err == nil {
+				linkedDir = cwd
+			}
+		}
+
+		// LLM-friendly output explaining what happened and what's available
 		fmt.Println()
-		fmt.Println("Successfully authenticated!")
-		fmt.Printf("  Organization: %s\n", token.Organization.Name)
-		fmt.Printf("  User: %s\n", token.User.Email)
+		fmt.Println("=== YGM CLI Ready ===")
 		fmt.Println()
-		fmt.Println("You can now use 'ygm brand', 'ygm tasks', and 'ygm context'.")
+		fmt.Printf("Authenticated as: %s (%s)\n", token.User.Email, token.Organization.Name)
+		fmt.Printf("Organization slug: %s\n", token.Organization.Slug)
+		if linkedDir != "" {
+			fmt.Printf("Linked directory: %s\n", linkedDir)
+		}
+		fmt.Println()
+		fmt.Println("Available commands:")
+		fmt.Println()
+		fmt.Println("  ygm brand --json    Get brand DNA (colors, fonts, voice guidelines)")
+		fmt.Println("  ygm tasks --json    Get pending marketing tasks with prompts")
+		fmt.Println("  ygm context         Get full context dump (brand + plan + tasks)")
+		fmt.Println()
+		fmt.Println("For AI assistants: Run 'ygm context' to get complete marketing context")
+		fmt.Println("including brand voice, visual guidelines, and actionable tasks.")
+		fmt.Println()
+		fmt.Println("Configuration:")
+		fmt.Printf("  Global config: ~/.config/ygm/config.yml (auth tokens)\n")
+		fmt.Printf("  Local config:  .ygm.yml (project org: %s)\n", token.Organization.Slug)
+		fmt.Println()
+		fmt.Println("To link a different project: cd /path/to/project && ygm link")
 
 		return nil
 
