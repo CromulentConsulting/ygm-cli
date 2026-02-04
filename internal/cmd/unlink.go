@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/CromulentConsulting/ygm-cli/internal/config"
+	"github.com/CromulentConsulting/ygm-cli/internal/skills"
 	"github.com/spf13/cobra"
 )
 
@@ -36,6 +38,11 @@ func runUnlink(cmd *cobra.Command, args []string) error {
 
 	if err := config.RemoveLocal(); err != nil {
 		return fmt.Errorf("failed to remove local config: %w", err)
+	}
+
+	// Remove local agent skills
+	if err := skills.RemoveLocal(); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: could not remove local agent skills: %v\n", err)
 	}
 
 	fmt.Printf("Removed %s\n", path)

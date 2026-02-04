@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/CromulentConsulting/ygm-cli/internal/config"
+	"github.com/CromulentConsulting/ygm-cli/internal/skills"
 	"github.com/spf13/cobra"
 )
 
@@ -119,6 +120,11 @@ func runLink(cmd *cobra.Command, args []string) error {
 	account := globalCfg.Accounts[orgSlug]
 	fmt.Printf("Linked to '%s' (%s)\n", orgSlug, account.OrgName)
 	fmt.Printf("Created %s\n", config.LocalConfigFile)
+
+	// Install local agent skills for AI assistant discovery
+	if err := skills.InstallLocal(); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: could not install local agent skills: %v\n", err)
+	}
 
 	return nil
 }

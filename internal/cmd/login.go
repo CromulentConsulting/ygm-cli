@@ -8,6 +8,7 @@ import (
 	"github.com/CromulentConsulting/ygm-cli/internal/api"
 	"github.com/CromulentConsulting/ygm-cli/internal/auth"
 	"github.com/CromulentConsulting/ygm-cli/internal/config"
+	"github.com/CromulentConsulting/ygm-cli/internal/skills"
 	"github.com/spf13/cobra"
 )
 
@@ -119,13 +120,19 @@ func runLogin(cmd *cobra.Command, args []string) error {
 		}
 
 		// Auto-link current directory to this org
-		localCfg := &config.LocalConfig{
-			Org: token.Organization.Slug,
+		localCfg := &config.LocalConfig{Org: token.Organization.Slug}
+		linkedDir, _ := os.Getwd()
+		if err := localCfg.Save(); err != nil {
+			linkedDir = "" // Don't show linked dir if save failed
 		}
-		linkedDir := ""
-		if err := localCfg.Save(); err == nil {
-			if cwd, err := os.Getwd(); err == nil {
-				linkedDir = cwd
+
+		// Install agent skills for discovery by AI assistants
+		if err := skills.InstallGlobal(); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not install global agent skills: %v\n", err)
+		}
+		if linkedDir != "" {
+			if err := skills.InstallLocal(); err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: could not install local agent skills: %v\n", err)
 			}
 		}
 
