@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	ConfigVersion = 1
-	DefaultAPIURL = "https://ygm.app"
+	ConfigVersion   = 1
+	DefaultAPIURL   = "https://ygm.app"
+	LocalConfigFile = ".ygm.yml"
 )
 
 // Config represents the CLI configuration stored in ~/.config/ygm/config.yml
@@ -113,4 +114,85 @@ func NewConfig() *Config {
 		APIURL:   DefaultAPIURL,
 		Accounts: make(map[string]Account),
 	}
+}
+
+// LocalConfig represents project-specific config stored in .ygm.yml
+type LocalConfig struct {
+	Org string `yaml:"org"` // Organization slug to use for this project
+}
+
+// LocalConfigPath returns the path to the local config file in the current directory
+// It walks up the directory tree to find .ygm.yml (like .git)
+func LocalConfigPath() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		path := filepath.Join(dir, LocalConfigFile)
+		if _, err := os.Stat(path); err == nil {
+			return path, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			// Reached root, no local config found
+			return "", nil
+		}
+		dir = parent
+	}
+}
+
+// LoadLocal reads the local config from the current directory or parents
+func LoadLocal() (*LocalConfig, error) {
+	path, err := LocalConfigPath()
+	if err != nil {
+		return nil, err
+	}
+
+	if path == "" {
+		return nil, nil // No local config
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read local config: %w", err)
+	}
+
+	var cfg LocalConfig
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return nil, fmt.Errorf("failed to parse local config: %w", err)
+	}
+
+	return &cfg, nil
+}
+
+// SaveLocal writes the local config to the current directory
+func (c *LocalConfig) Save() error {
+	data, err := yaml.Marshal(c)
+	if err != nil {
+		return fmt.Errorf("failed to serialize local config: %w", err)
+	}
+
+	// Write to current directory
+	if err := os.WriteFile(LocalConfigFile, data, 0644); err != nil {
+		return fmt.Errorf("failed to write local config: %w", err)
+	}
+
+	return nil
+}
+
+// RemoveLocal deletes the local config file
+func RemoveLocal() error {
+	path, err := LocalConfigPath()
+	if err != nil {
+		return err
+	}
+
+	if path == "" {
+		return fmt.Errorf("no local config found")
+	}
+
+	return os.Remove(path)
 }
