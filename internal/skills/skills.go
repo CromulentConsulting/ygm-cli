@@ -98,10 +98,18 @@ func RemoveLocal() error {
 
 	canonDir, symlinkDirs := skillPaths(cwd)
 
-	// Remove symlinks first
+	// Remove symlinks (only if they are actually symlinks)
 	for _, dir := range symlinkDirs {
-		if err := os.RemoveAll(dir); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: could not remove %s: %v\n", dir, err)
+		fi, err := os.Lstat(dir)
+		if err != nil {
+			continue // doesn't exist or can't stat — skip
+		}
+		if fi.Mode()&os.ModeSymlink == 0 {
+			fmt.Fprintf(os.Stderr, "Warning: %s is not a symlink, skipping removal\n", dir)
+			continue
+		}
+		if err := os.Remove(dir); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not remove symlink %s: %v\n", dir, err)
 		}
 	}
 
