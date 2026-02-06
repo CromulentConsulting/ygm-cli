@@ -10,7 +10,7 @@ import (
 
 const (
 	ConfigVersion   = 1
-	DefaultAPIURL   = "https://ygm.app"
+	DefaultAPIURL   = "https://youvegotmarketing.com"
 	LocalConfigFile = ".ygm.yml"
 )
 

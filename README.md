@@ -1,6 +1,6 @@
 # ygm - You've Got Marketing CLI
 
-Command-line interface for [You've Got Marketing](https://ygm.app).
+Command-line interface for [You've Got Marketing](https://youvegotmarketing.com).
 
 ## Installation
 
@@ -61,7 +61,7 @@ Config is stored in `~/.config/ygm/config.yml`:
 ```yaml
 version: 1
 default_org: acme-corp
-api_url: https://ygm.app
+api_url: https://youvegotmarketing.com
 
 accounts:
   acme-corp:
