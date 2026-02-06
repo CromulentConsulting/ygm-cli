@@ -25,6 +25,7 @@ blog articles, and other marketing materials.`,
 func init() {
 	tasksCmd.Flags().StringVar(&statusFilter, "status", "", "Filter by status (pending, in_progress, completed)")
 	tasksCmd.Flags().StringVar(&platformFilter, "platform", "", "Filter by platform (instagram, twitter, linkedin, etc.)")
+	tasksCmd.AddCommand(tasksCreateCmd)
 }
 
 func runTasks(cmd *cobra.Command, args []string) error {

@@ -155,6 +155,39 @@ func (c *Client) GetTask(id int) (*Task, error) {
 	return &task, nil
 }
 
+// CreateTaskRequest represents the request body for creating a task
+type CreateTaskRequest struct {
+	Title             string  `json:"title"`
+	Description       string  `json:"description,omitempty"`
+	Platform          string  `json:"platform,omitempty"`
+	AssetType         string  `json:"asset_type,omitempty"`
+	SuggestedPostDate *string `json:"suggested_post_date,omitempty"`
+}
+
+// CreateTask creates a new marketing task
+func (c *Client) CreateTask(req CreateTaskRequest) (*Task, error) {
+	body := map[string]interface{}{
+		"task": req,
+	}
+
+	resp, err := c.doRequest("POST", "/api/v1/tasks", body)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated {
+		return nil, c.parseError(resp)
+	}
+
+	var task Task
+	if err := json.NewDecoder(resp.Body).Decode(&task); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	return &task, nil
+}
+
 // GetContext fetches the full context dump
 func (c *Client) GetContext() (*ContextResponse, error) {
 	resp, err := c.doRequest("GET", "/api/v1/context", nil)
