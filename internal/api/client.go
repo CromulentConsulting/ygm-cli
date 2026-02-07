@@ -188,6 +188,58 @@ func (c *Client) CreateTask(req CreateTaskRequest) (*Task, error) {
 	return &task, nil
 }
 
+// UpdateTask updates an existing task
+func (c *Client) UpdateTask(id int, req UpdateTaskRequest) (*Task, error) {
+	body := map[string]interface{}{
+		"task": req,
+	}
+
+	resp, err := c.doRequest("PATCH", fmt.Sprintf("/api/v1/tasks/%d", id), body)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("task not found")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var task Task
+	if err := json.NewDecoder(resp.Body).Decode(&task); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	return &task, nil
+}
+
+// DiscardTask soft-deletes a task
+func (c *Client) DiscardTask(id int) (*DiscardResponse, error) {
+	resp, err := c.doRequest("DELETE", fmt.Sprintf("/api/v1/tasks/%d", id), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("task not found")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var result DiscardResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	return &result, nil
+}
+
 // GetContext fetches the full context dump
 func (c *Client) GetContext() (*ContextResponse, error) {
 	resp, err := c.doRequest("GET", "/api/v1/context", nil)
