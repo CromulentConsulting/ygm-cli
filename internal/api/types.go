@@ -150,6 +150,19 @@ type TaskSummary struct {
 	CopyPrompt        string  `json:"copy_prompt,omitempty"`
 }
 
+// UpdateTaskRequest represents the request body for updating a task
+type UpdateTaskRequest struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Status      string `json:"status,omitempty"`
+}
+
+// DiscardResponse represents the response from discarding a resource
+type DiscardResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 // ErrorResponse represents an API error
 type ErrorResponse struct {
 	Error string `json:"error"`

@@ -26,6 +26,8 @@ func init() {
 	tasksCmd.Flags().StringVar(&statusFilter, "status", "", "Filter by status (pending, in_progress, completed)")
 	tasksCmd.Flags().StringVar(&platformFilter, "platform", "", "Filter by platform (instagram, twitter, linkedin, etc.)")
 	tasksCmd.AddCommand(tasksCreateCmd)
+	tasksCmd.AddCommand(tasksUpdateCmd)
+	tasksCmd.AddCommand(tasksDiscardCmd)
 }
 
 func runTasks(cmd *cobra.Command, args []string) error {
