@@ -29,8 +29,14 @@ guidelines, and actionable tasks. The output is JSON suitable for LLM consumptio
 ## Available Commands
 
 - ` + "`ygm brand --json`" + ` - Brand DNA (colors, fonts, voice guidelines)
-- ` + "`ygm tasks --json`" + ` - Pending marketing tasks with prompts
 - ` + "`ygm context`" + ` - Full context dump (brand + plan + tasks)
+
+### Task Management
+
+- ` + "`ygm tasks --json`" + ` - List marketing tasks (filter with --status, --platform)
+- ` + "`ygm tasks create --title \"...\" [--platform X] [--description \"...\"] [--date YYYY-MM-DD] --json`" + ` - Create a task
+- ` + "`ygm tasks update <id> [--title \"...\"] [--description \"...\"] [--status pending|in_progress|completed] --json`" + ` - Update a task
+- ` + "`ygm tasks discard <id> --json`" + ` - Discard (soft-delete) a task
 
 ## When to Use
 

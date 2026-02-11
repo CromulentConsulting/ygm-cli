@@ -31,13 +31,25 @@ ygm brand          # Human-readable output
 ygm brand --json   # JSON output for scripts
 ```
 
-### List Tasks
+### Tasks
 
 ```bash
+# List tasks
 ygm tasks                      # All tasks
 ygm tasks --status=pending     # Filter by status
 ygm tasks --platform=instagram # Filter by platform
 ygm tasks --json               # JSON output
+
+# Create a task
+ygm tasks create --title "Post on Reddit" --platform reddit
+ygm tasks create --title "Launch tweet" --description "Announce v2" --platform twitter --date 2026-02-11
+
+# Update a task
+ygm tasks update 42 --status completed
+ygm tasks update 42 --title "New title" --description "Updated copy"
+
+# Discard a task (soft-delete)
+ygm tasks discard 42
 ```
 
 ### Get Context for AI Prompts

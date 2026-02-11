@@ -14,11 +14,18 @@ var (
 
 var tasksCmd = &cobra.Command{
 	Use:   "tasks",
-	Short: "List marketing tasks",
-	Long: `List marketing tasks from your marketing plan.
+	Short: "Manage marketing tasks",
+	Long: `Manage marketing tasks from your marketing plan.
 
 Tasks include content creation items like social media posts,
-blog articles, and other marketing materials.`,
+blog articles, and other marketing materials.
+
+When run without a subcommand, lists all tasks.
+
+Subcommands:
+  create    Create a new marketing task
+  update    Update a task's title, description, or status
+  discard   Soft-delete a task`,
 	RunE: runTasks,
 }
 
